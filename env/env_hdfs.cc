@@ -249,9 +249,13 @@ class HdfsWritableFile: public WritableFile {
     if (hdfsFlush(fileSys_, hfile_) == -1) {
       return IOError(filename_, errno);
     }
+
+    // Do not do hsync yet, it is time costly.
+#if	0
     if (hdfsHSync(fileSys_, hfile_) == -1) {
       return IOError(filename_, errno);
     }
+#endif
     ROCKS_LOG_DEBUG(mylog, "[hdfs] HdfsWritableFile Synced %s\n",
                     filename_.c_str());
     return Status::OK();
